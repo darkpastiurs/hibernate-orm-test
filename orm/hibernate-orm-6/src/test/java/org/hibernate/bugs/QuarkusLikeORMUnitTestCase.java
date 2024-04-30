@@ -21,6 +21,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.entities.Persona;
+import org.hibernate.entities.PersonaJuridica;
+import org.hibernate.entities.PersonaNatural;
 import org.hibernate.id.SequenceMismatchStrategy;
 import org.hibernate.id.enhanced.StandardOptimizerDescriptor;
 import org.hibernate.loader.BatchFetchStyle;
@@ -44,8 +47,9 @@ public class QuarkusLikeORMUnitTestCase extends BaseCoreFunctionalTestCase {
 	@Override
 	protected Class<?>[] getAnnotatedClasses() {
 		return new Class<?>[] {
-//				Foo.class,
-//				Bar.class
+				Persona.class,
+				PersonaNatural.class,
+				PersonaJuridica.class
 		};
 	}
 
@@ -78,7 +82,21 @@ public class QuarkusLikeORMUnitTestCase extends BaseCoreFunctionalTestCase {
 		// BaseCoreFunctionalTestCase automatically creates the SessionFactory and provides the Session.
 		Session s = openSession();
 		Transaction tx = s.beginTransaction();
-		// Do stuff...
+		Persona persona = new Persona();
+		persona.setDescripcion("Persona Natural Test");
+		PersonaNatural personaNatural = new PersonaNatural();
+		personaNatural.setNombreCompleto("Juan Perez");
+		persona.setPersonaNatural(personaNatural);
+		s.persist(persona);
+		System.out.println("Persona ingresada = ".concat(persona.toString()));
+		Persona persona2 = new Persona();
+		persona2.setDescripcion("Persona Juridica Test");
+		PersonaJuridica personaJuridica = new PersonaJuridica();
+		personaJuridica.setNombreSociedad("Empresa Anonima S.A. de C.V.");
+		personaJuridica.setNombreComercial("Productos Anonimos");
+		persona2.setPersonaJuridica(personaJuridica);
+		s.persist(persona2);
+		System.out.println("Persona ingresada = ".concat(persona2.toString()));
 		tx.commit();
 		s.close();
 	}
